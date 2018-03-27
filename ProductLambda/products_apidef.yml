@@ -1,0 +1,51 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0"
+  title: "ProductLambdaAPI"
+basePath: "/stage"
+schemes:
+- "https"
+paths:
+  /product/{productId}:
+    get:
+      responses: {}
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetProductFunction.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+      security:
+        - OpenAM_Authorizer: []
+    put:
+      responses: {}
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PutProductFunction.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+      security:
+        - OpenAM_Authorizer: []
+    delete:
+      responses: {}
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteProductFunction.Arn}/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        type: "aws_proxy"
+      security:
+        - OpenAM_Authorizer: []
+securityDefinitions:
+  OpenAM_Authorizer:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    x-amazon-apigateway-authtype: "custom"
+    x-amazon-apigateway-authorizer:
+      authorizerUri:
+        Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OpenAMAuthorizer.Arn}/invocations"
+      authorizerResultTtlInSeconds: 0
+      type: "token"

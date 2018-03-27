@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Simple CRUD webservice. State is stored in a SimpleTable (DynamoDB) resource.
+Parameters:
+    BucketName:
+        Type: String
+    OpenAMURL:
+        Type: String
+    PolicyUser:
+        Type: String
+    PolicyPwd:
+        Type: String
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Dev
+      DefinitionBody:
+          'Fn::Transform':
+            Name: 'AWS::Include'
+            # Replace <bucket> with your bucket name
+            Parameters:
+              Location: !Sub "s3://${BucketName}/products_apidef.yml"
+
+  GetProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: products.get
+      Runtime: nodejs6.10
+      CodeUri:
+        Bucket: !Ref BucketName
+        Key: product_api.zip
+      Policies: AmazonDynamoDBReadOnlyAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Products
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /product/{productId}
+            Method: get
+
+  PutProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: products.put
+      Runtime: nodejs6.10
+      CodeUri:
+        Bucket: !Ref BucketName
+        Key: product_api.zip
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Products
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /product/{productId}
+            Method: put
+
+  DeleteProductFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: products.delete
+      Runtime: nodejs6.10
+      CodeUri:
+        Bucket: !Ref BucketName
+        Key: product_api.zip
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Products
+      Events:
+        DeleteResource:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /product/{productId}
+            Method: delete
+
+  OpenAMAuthorizer:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.amazonaws.lambda.demo.OpenAMAuthorizer
+      Runtime: java8
+      CodeUri:
+        Bucket: !Ref BucketName
+        Key: OpenAMAuthorizer.zip
+      MemorySize: 256
+      Timeout: 15
+      Environment:
+        Variables:
+          OPENAM_URL: !Ref OpenAMURL
+          POLICY_EVAL_PWD: !Ref PolicyUser
+          POLICY_EVAL_UNAME: !Ref PolicyPwd
+
+  OpenAMAuthorizerPerm:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - OpenAMAuthorizer
+      - ApiGatewayApi
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: OpenAMAuthorizer
+      Principal: apigateway.amazonaws.com
+  Products:
+    Type: AWS::Serverless::SimpleTable
+
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref ApiGatewayApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Dev'
