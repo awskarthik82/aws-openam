@@ -95,8 +95,8 @@ Resources:
       Environment:
         Variables:
           OPENAM_URL: !Ref OpenAMURL
-          POLICY_EVAL_PWD: !Ref PolicyUser
-          POLICY_EVAL_UNAME: !Ref PolicyPwd
+          POLICY_EVAL_PWD: !Ref PolicyPwd
+          POLICY_EVAL_UNAME: !Ref PolicyUser
 
   OpenAMAuthorizerPerm:
     Type: AWS::Lambda::Permission
