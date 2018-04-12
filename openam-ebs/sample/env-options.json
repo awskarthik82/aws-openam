@@ -1,0 +1,28 @@
+[{
+		"OptionName": "InstanceType",
+		"Namespace": "aws:autoscaling:launchconfiguration",
+		"Value": "t2.micro"
+	},
+	{
+		"OptionName": "ImageId",
+		"ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+		"Namespace": "aws:autoscaling:launchconfiguration",
+		"Value": "ami-a70eabda"
+	},
+	{
+		"OptionName": "MaxSize",
+		"ResourceName": "AWSEBAutoScalingGroup",
+		"Namespace": "aws:autoscaling:asg",
+		"Value": "1"
+	},
+	{
+		"OptionName": "EnvironmentType",
+		"Namespace": "aws:elasticbeanstalk:environment",
+		"Value": "SingleInstance"
+	},
+	{
+		"OptionName": "XRayEnabled",
+		"Namespace": "aws:elasticbeanstalk:xray",
+		"Value": "false"
+	}
+]
