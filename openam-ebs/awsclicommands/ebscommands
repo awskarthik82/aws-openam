@@ -1,5 +1,5 @@
 ##Upload the zip package to S3 bucket
-s3 cp ebspackage.zip s3://<bucket_name>
+aws s3 cp ebspackage.zip s3://<bucket_name>
 
 ## Creating and deploying application to elastic beanstalk
 ## 1. Creaet a elastic beanstalk application
@@ -9,7 +9,7 @@ aws elasticbeanstalk create-application --application-name <app_name> --descript
 aws elasticbeanstalk create-application-version --application-name <app_name> --version-label openam-v1 --description OpenAMWARV1 --source-bundle S3Bucket="<bucket_name>",S3Key="ebspackage.zip" --auto-create-application
 
 ## 3. Create a new environment dev,test etc. with the application version. Also, specify a cname-prefix for the URL. Please note that cname-prefix should be unique across AWS. If the ##    commands throws error, change the cname-prefix to a different value
-aws elasticbeanstalk create-environment --application-name <app_name> --environment-name <app_environment> --cname-prefix <cname-prefix> --version-label openam-v1 --solution-stack-name "64bit Amazon Linux 2017.09 v2.7.7 running Tomcat 8 Java 8" --tier Name="WebServer",Type="Standard" --option-settings env-options.json
+aws elasticbeanstalk create-environment --application-name <app_name> --environment-name <app_environment> --cname-prefix <cname-prefix> --version-label openam-v1 --solution-stack-name "64bit Amazon Linux 2017.09 v2.7.7 running Tomcat 8 Java 8" --tier Name="WebServer",Type="Standard" --option-settings file://env-options.json
 
 ## 4. Get the URL of this environment. Navigate to "AWS Management console > Elastic Beanstalk" and monitor the status of environment creation
-aws elasticbeanstalk describe-environments --environment-names <app_environment> --application-name <app_name> --query 'Environments[0].{URL:CNAME}'
+aws elasticbeanstalk describe-environments --environment-names test-env5 --application-name openam-server5 --query 'Environments[0].{URL:CNAME}'
