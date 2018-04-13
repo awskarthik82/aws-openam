@@ -12,4 +12,4 @@ aws elasticbeanstalk create-application-version --application-name <app_name> --
 aws elasticbeanstalk create-environment --application-name <app_name> --environment-name <app_environment> --cname-prefix <cname-prefix> --version-label openam-v1 --solution-stack-name "64bit Amazon Linux 2017.09 v2.7.7 running Tomcat 8 Java 8" --tier Name="WebServer",Type="Standard" --option-settings env-options.json
 
 ## 4. Get the URL of this environment. Navigate to "AWS Management console > Elastic Beanstalk" and monitor the status of environment creation
-aws elasticbeanstalk describe-environments --environment-names test-env5 --application-name openam-server5 --query 'Environments[0].{URL:CNAME}'
+aws elasticbeanstalk describe-environments --environment-names <app_environment> --application-name <app_name> --query 'Environments[0].{URL:CNAME}'
