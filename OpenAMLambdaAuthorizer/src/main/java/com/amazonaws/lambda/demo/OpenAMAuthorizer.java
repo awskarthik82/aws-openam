@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.amazonaws.lambda.demo.AuthPolicy.HttpMethod;
-import com.amazonaws.lambda.demo.OpenAMPolicyEvaluator.PolicyResponse;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
